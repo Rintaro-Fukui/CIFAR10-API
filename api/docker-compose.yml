@@ -3,8 +3,8 @@ version: "3.0"
 services:
   api:
     container_name: "api"
-    volumes:
-      - ./app :/app
-    build: ./docker/api
+    build: .
+    restart: always
+    tty: true
     ports:
-      - 8080:8080
+      - 8000:8000
