@@ -4,6 +4,7 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 
 from PIL import Image
+from io import BytesIO
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10):
@@ -30,12 +31,11 @@ class CNN(nn.Module):
         return x
 
 class Classifier:
-    def __init__(self, params_path='../utils/cifar10_cpu.pth'):
-        self.model_params = torch.load(params_path)
-        self.model = CNN()
+    def __init__(self):
+        pass
 
-    def preprocessing(self, img):
-        img = Image.open(img).convert('RGB')
+    def preprocessing(self, img:Image.Image):
+        img = Image.open(BytesIO(img)).convert('RGB')
         transform = transforms.Compose([
             transforms.Resize((32, 32)),
             transforms.ToTensor(),
@@ -45,9 +45,11 @@ class Classifier:
         return img_transformed
 
     def predict(self, input):
-        model_ = self.model.load_state_dict(self.model_params)
-        output = model_(input)
+        model = CNN()
+        model_prams = torch.load('./cifar10_cpu.pth')
+        model.load_state_dict(model_prams)
+        classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+        output = model(input)
         pred = nn.Softmax(dim=1)(output)
         label = int(pred.argmax(1))
-        classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-        return {'class:', classes[label], 'score:', float(pred[0][label])}
+        return classes[label], float(pred[0][label])
