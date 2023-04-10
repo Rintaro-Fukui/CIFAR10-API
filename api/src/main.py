@@ -9,7 +9,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/predict/")
-async def upload_file(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...)):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
         return "Image must be jpg or png."
