@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
+from classifier import Classifier
 
 app = FastAPI()
 
