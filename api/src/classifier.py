@@ -2,6 +2,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import torchvision.transforms as transforms
+from torchvision import models
 
 from PIL import Image
 from io import BytesIO
@@ -32,7 +33,8 @@ class CNN(nn.Module):
 
 class Classifier:
     def __init__(self):
-        pass
+        self.model = None
+        self.classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
     def preprocessing(self, img:Image.Image):
         img = Image.open(BytesIO(img)).convert('RGB')
@@ -46,13 +48,11 @@ class Classifier:
         return img_transformed
 
     def predict(self, input, prams_path='./cifar10_cpu.pth'):
-        model = CNN()
+        self.model = CNN()
         model_prams = torch.load(prams_path)
-        model.load_state_dict(model_prams)
-
-        classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-        output = model(input)
+        self.model.load_state_dict(model_prams)
+        output = self.model(input)
         pred = nn.Softmax(dim=1)(output)
         label = int(pred.argmax(1))
 
-        return classes[label], float(pred[0][label])
+        return self.classes[label], float(pred[0][label])
